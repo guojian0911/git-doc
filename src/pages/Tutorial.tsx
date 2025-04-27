@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +10,8 @@ import ErrorState from '@/components/tutorial/ErrorState';
 import MobileNavigation from '@/components/tutorial/MobileNavigation';
 import TutorialHeader from '@/components/tutorial/TutorialHeader';
 import ContentDisplay from '@/components/tutorial/ContentDisplay';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 interface Chapter {
   id: string;
@@ -232,4 +233,3 @@ const TutorialPage = () => {
 };
 
 export default TutorialPage;
-
