@@ -33,12 +33,12 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="hidden lg:block w-64 flex-shrink-0 border-r border-gray-100 bg-gray-50/50">
-      <ScrollArea className="h-full py-6">
-        <div className="px-4 space-y-6">
+    <div className="hidden lg:block w-64 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <ScrollArea className="h-full py-8">
+        <div className="px-3 space-y-8">
           {sections.map((section, index) => (
-            <div key={index} className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-500 px-2">
+            <div key={index} className="space-y-3">
+              <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3">
                 {section.title}
               </h4>
               <nav className="space-y-1">
@@ -47,10 +47,10 @@ const Sidebar = () => {
                     key={linkIndex}
                     href={link.href}
                     className={cn(
-                      "block px-2 py-1.5 text-sm rounded-md transition-colors",
+                      "block px-3 py-2 text-sm rounded-md transition-colors",
                       location.pathname === link.href
-                        ? "text-brand-orange bg-brand-orange/5 font-medium"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        ? "text-brand-orange bg-orange-50 dark:bg-orange-900/10 font-medium"
+                        : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800"
                     )}
                   >
                     {link.title}

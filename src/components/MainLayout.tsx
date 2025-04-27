@@ -4,7 +4,7 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import ContentTable from './ContentTable';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, ChevronRight } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children, tableOfContents = [] }: MainLayoutProps) => {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-gray-50/50 dark:bg-gray-900">
       <Header />
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
@@ -25,16 +25,18 @@ const MainLayout = ({ children, tableOfContents = [] }: MainLayoutProps) => {
         
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto">
-          <div className="container mx-auto">
-            <div className="flex">
+          <div className="container mx-auto max-w-[1600px]">
+            <div className="flex gap-8">
               {/* Content Area */}
               <div className="flex-1 min-w-0 px-4 py-8 xl:px-8">
-                {children}
+                <div className="prose prose-gray max-w-none">
+                  {children}
+                </div>
               </div>
               
               {/* Right Sidebar - Table of Contents */}
               {tableOfContents.length > 0 && (
-                <div className="hidden xl:block w-64 pl-8 py-8 overflow-y-auto">
+                <div className="hidden xl:block w-72 py-8">
                   <ContentTable items={tableOfContents} />
                 </div>
               )}
