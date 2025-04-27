@@ -28,7 +28,7 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
     while ((match = headingRegex.exec(content)) !== null) {
       const level = match[1].length;
       const text = match[2];
-      const id = `heading-${extractedHeadings.length}-${text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}`;
+      const id = `heading-${text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')}`;
       
       extractedHeadings.push({ id, text, level });
     }
@@ -54,7 +54,7 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
   };
 
   return (
-    <article className="prose prose-gray max-w-none">
+    <article className="prose prose-gray max-w-none overflow-hidden">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
@@ -63,22 +63,22 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
             const text = (props.children?.[0] as string) || '';
             const id = headings.find(h => h.text === text)?.id || 
                      text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-            return <h1 id={id} className="scroll-mt-16 text-3xl font-bold mb-6 mt-8 text-gray-900" {...props} />;
+            return <h1 id={id} className="scroll-mt-16 text-2xl md:text-3xl font-bold mb-6 mt-8 text-gray-900 dark:text-gray-100" {...props} />;
           },
           h2: ({ node, ...props }) => {
             const text = (props.children?.[0] as string) || '';
             const id = headings.find(h => h.text === text)?.id || 
                      text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-            return <h2 id={id} className="scroll-mt-16 text-2xl font-semibold mb-4 mt-8 text-gray-900" {...props} />;
+            return <h2 id={id} className="scroll-mt-16 text-xl md:text-2xl font-semibold mb-4 mt-8 text-gray-900 dark:text-gray-100" {...props} />;
           },
           h3: ({ node, ...props }) => {
             const text = (props.children?.[0] as string) || '';
             const id = headings.find(h => h.text === text)?.id || 
                      text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-            return <h3 id={id} className="scroll-mt-16 text-xl font-semibold mb-3 mt-6 text-gray-900" {...props} />;
+            return <h3 id={id} className="scroll-mt-16 text-lg md:text-xl font-semibold mb-3 mt-6 text-gray-900 dark:text-gray-100" {...props} />;
           },
           p: ({ node, ...props }) => (
-            <p className="text-base leading-relaxed text-gray-700 mb-6" {...props} />
+            <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300 mb-6 break-words" {...props} />
           ),
           pre: ({ node, ...props }) => {
             const code = (props.children as any)[0]?.props?.children?.[0] || '';
@@ -108,7 +108,7 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
           code: ({ node, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
             return !match ? (
-              <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono text-gray-800" {...props}>
+              <code className="rounded bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 text-sm font-mono text-gray-800 dark:text-gray-200" {...props}>
                 {children}
               </code>
             ) : (
@@ -123,10 +123,10 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
             </div>
           ),
           th: ({ node, ...props }) => (
-            <th className="border-b border-gray-300 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-900" {...props} />
+            <th className="border-b border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100" {...props} />
           ),
           td: ({ node, ...props }) => (
-            <td className="border-b border-gray-200 px-4 py-3 text-sm" {...props} />
+            <td className="border-b border-gray-200 dark:border-gray-700 px-4 py-3 text-sm" {...props} />
           ),
           a: ({ node, ...props }) => (
             <a className="text-brand-orange hover:underline" {...props} />
@@ -138,13 +138,13 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
             <ol className="list-decimal pl-6 my-4 space-y-2" {...props} />
           ),
           li: ({ node, ...props }) => (
-            <li className="text-gray-700" {...props} />
+            <li className="text-gray-700 dark:text-gray-300" {...props} />
           ),
           img: ({ node, ...props }) => (
-            <img className="rounded-lg max-w-full my-6 mx-auto shadow-md" {...props} />
+            <img className="rounded-lg max-w-full my-6 mx-auto shadow-md" {...props} alt={props.alt || "图片"} />
           ),
           blockquote: ({ node, ...props }) => (
-            <blockquote className="border-l-4 border-brand-orange pl-4 italic my-6 text-gray-600" {...props} />
+            <blockquote className="border-l-4 border-brand-orange pl-4 italic my-6 text-gray-600 dark:text-gray-400" {...props} />
           ),
         }}
       >
