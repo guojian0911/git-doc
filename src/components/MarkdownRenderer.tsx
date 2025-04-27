@@ -16,6 +16,7 @@ interface MarkdownRendererProps {
 const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProps) => {
   const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [mermaidDiagrams, setMermaidDiagrams] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   // Initialize mermaid
@@ -63,17 +64,33 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
     }, 2000);
   };
 
-  // Render Mermaid diagrams
-  const renderMermaidDiagram = async (code: string) => {
-    try {
-      const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
-      await mermaid.render(id, code);
-      return { __html: document.getElementById(id)?.innerHTML || '' };
-    } catch (error) {
-      console.error('Error rendering mermaid diagram:', error);
-      return { __html: 'Error rendering diagram' };
+  // Process Mermaid diagrams
+  useEffect(() => {
+    const processMermaidDiagrams = async () => {
+      // Extract mermaid code blocks from content
+      const mermaidRegex = /```mermaid\n([\s\S]*?)\n```/g;
+      const diagrams: Record<string, string> = {};
+      
+      let match;
+      while ((match = mermaidRegex.exec(content)) !== null) {
+        const code = match[1];
+        const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+        try {
+          const { svg } = await mermaid.render(id, code);
+          diagrams[code] = svg;
+        } catch (error) {
+          console.error('Error rendering mermaid diagram:', error);
+          diagrams[code] = '<div>Error rendering diagram</div>';
+        }
+      }
+      
+      setMermaidDiagrams(diagrams);
+    };
+    
+    if (content) {
+      processMermaidDiagrams();
     }
-  };
+  }, [content]);
 
   return (
     <article className="prose prose-gray max-w-none overflow-hidden">
@@ -109,9 +126,9 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
             if (language === 'mermaid') {
               return (
                 <div className="my-6">
-                  <div
+                  <div 
                     className="flex justify-center"
-                    dangerouslySetInnerHTML={renderMermaidDiagram(code)}
+                    dangerouslySetInnerHTML={{ __html: mermaidDiagrams[code] || '<div>Loading diagram...</div>' }}
                   />
                 </div>
               );
