@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import mermaid from 'mermaid';
 import { cn } from '@/lib/utils';
 import { Check, Copy } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
@@ -16,6 +17,15 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
   const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Initialize mermaid
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'loose',
+    });
+  }, []);
 
   // Extract headings for table of contents
   useEffect(() => {
@@ -53,6 +63,18 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
     }, 2000);
   };
 
+  // Render Mermaid diagrams
+  const renderMermaidDiagram = async (code: string) => {
+    try {
+      const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+      await mermaid.render(id, code);
+      return { __html: document.getElementById(id)?.innerHTML || '' };
+    } catch (error) {
+      console.error('Error rendering mermaid diagram:', error);
+      return { __html: 'Error rendering diagram' };
+    }
+  };
+
   return (
     <article className="prose prose-gray max-w-none overflow-hidden">
       <ReactMarkdown
@@ -82,7 +104,19 @@ const MarkdownRenderer = ({ content, onHeadingsExtracted }: MarkdownRendererProp
           ),
           pre: ({ node, ...props }) => {
             const code = (props.children as any)[0]?.props?.children?.[0] || '';
+            const language = (props.children as any)[0]?.props?.className?.replace('language-', '') || '';
             
+            if (language === 'mermaid') {
+              return (
+                <div className="my-6">
+                  <div
+                    className="flex justify-center"
+                    dangerouslySetInnerHTML={renderMermaidDiagram(code)}
+                  />
+                </div>
+              );
+            }
+
             return (
               <div className="relative my-6 rounded-lg overflow-hidden">
                 <pre className="rounded-md bg-gray-900 p-4 overflow-x-auto text-sm text-white" {...props} />
