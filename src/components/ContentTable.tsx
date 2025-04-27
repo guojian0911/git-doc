@@ -10,12 +10,30 @@ interface ContentTableProps {
 }
 
 const ContentTable = ({ items }: ContentTableProps) => {
+  // Create a map to track used IDs and ensure uniqueness
+  const uniqueItems = items.reduce<typeof items>((acc, item, index) => {
+    // If we've already seen this ID, create a new unique ID by appending the index
+    const seenIds = new Set(acc.map(i => i.id));
+    let uniqueId = item.id;
+    
+    if (seenIds.has(uniqueId)) {
+      uniqueId = `${item.id}-${index}`;
+    }
+    
+    acc.push({
+      ...item,
+      id: uniqueId
+    });
+    
+    return acc;
+  }, []);
+
   return (
     <div className="w-full">
       <div className="sticky top-4">
         <h3 className="text-sm font-medium text-gray-500 mb-4 px-4">在此页面</h3>
         <nav className="space-y-0.5">
-          {items.map((item) => (
+          {uniqueItems.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
