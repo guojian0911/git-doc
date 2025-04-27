@@ -7,8 +7,25 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TutorialList from "./pages/TutorialList";
 import TutorialPage from "./pages/Tutorial";
 import NotFound from "./pages/NotFound";
+import { Suspense } from "react";
 
-const queryClient = new QueryClient();
+// Configure QueryClient with better defaults
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
+
+// Simple loading spinner component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="w-12 h-12 border-4 border-t-4 border-brand-orange rounded-full animate-spin"></div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -16,11 +33,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<TutorialList />} />
-          <Route path="/tutorial/:tutorialId" element={<TutorialPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<TutorialList />} />
+            <Route path="/tutorial/:tutorialId" element={<TutorialPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
